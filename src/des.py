@@ -252,22 +252,18 @@ class DES(object):
             res += befip[self.__ip1[i] - 1]
         return res
 
-    def input_uncode(self):
-        filename2 = ''
-        filename1 = raw_input('enter file name:')
+    def input_uncode(self, parent, filename1, filename2):
         f1 = open(filename1, 'rb')
+        parent.report.insertPlainText('Read ' + filename1 + ' successfully.\n')
         f1.seek(0)
-        if filename1.find('.') != - 1:
-            filename2 = filename1[:filename1.find('.')]
-            filename2 += '_undes'
-            filename2 += filename1[filename1.find('.'):]
-        else:
-            filename2 = filename1
-            filename2 += '_undes'
         f2 = open(filename2, 'wb')
+        parent.report.insertPlainText('Create ' + filename2 + ' successfully.\n')
         strlength = f1.read(8)
         length, = struct.unpack('Q', strlength)
+        val = length
+        parent.report.insertPlainText('Unencrypt...\n')
         while True:
+            parent.pbar.setValue(100 - length * 100 / val)
             data_string = f1.read(8)
             if length >= 8:
                 temp = self.uncode(data_string)
@@ -292,23 +288,22 @@ class DES(object):
                     f2.write(writedata[i])
                 break
             length -= 8
+        parent.report.insertPlainText('Unencrypt has been done.\n')
+        parent.pbar.setValue(100)
     
-    def input_encode(self):
-        filename2 = ''
-        filename1 = raw_input('enter file name:')
+    def input_encode(self, parent, filename1, filename2):
+        val = 0
         f1 = open(filename1, 'rb')
+        parent.report.insertPlainText('Read ' + filename1 + ' successfully.\n')
         f1.seek(0)
-        if filename1.find('.') != - 1:
-            filename2 = filename1[:filename1.find('.')]
-            filename2 += '_des'
-            filename2 += filename1[filename1.find('.'):]
-        else:
-            filename2 = filename1
-            filename2 += '_des'
         f2 = open(filename2, 'wb')
+        parent.report.insertPlainText('Create ' + filename2 + ' successfully.\n')
         length = getsize(filename1)
         f2.write(struct.pack('Q', length))
+        parent.report.insertPlainText('Encrypt...\n')
         while True:
+            val += 8
+            parent.pbar.setValue(val * 100 / length)
             data_string = f1.read(8)
             if len(data_string) == 8:
                 temp = self.encode(data_string)
@@ -332,9 +327,5 @@ class DES(object):
                 writedata = binascii.a2b_hex(hextemp)
                 f2.write(writedata)
                 break
-    
-if __name__ == '__main__':
-    d = DES()
-    d.input_encode()
-    d.input_uncode()
-    
+        parent.report.insertPlainText('Encrypt has been done.\n')
+        parent.pbar.setValue(100)
