@@ -78,11 +78,11 @@ DES_IN_CPP的用法
 
 以下为解密53.2MB文件`AgthStart_v2.8L_t12.7z_DES`的结果，解密函数为DES_IN_CPP中的函数，其余调用为Python
 
-         174 function calls in 15.460 seconds
+        174 function calls in 15.460 seconds
 
-   Ordered by: standard name
+    Ordered by: standard name
 
-   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
        54   15.392    0.285   15.392    0.285 :0(Encrypt)
         2    0.000    0.000    0.000    0.000 :0(open)
         1    0.000    0.000    0.000    0.000 :0(pack)
