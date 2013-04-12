@@ -1,5 +1,6 @@
 import os
 import binascii
+import DES_IN_CPP
 from os.path import join, getsize
 
 class main(object):
@@ -22,12 +23,20 @@ class main(object):
             return False
         else:
             flag = True
-            for i in range (0, length):
-                parent.pbar.setValue((i + 1) * 100 / length)
-                l1 = f1.read(1)
-                l2 = f2.read(1)
-                if l1 != l2:
-                    flag = False
+            val = 0
+            while True:
+                parent.pbar.setValue(val * 100 / length)
+                if length - val >= 1024 * 1024:
+                    l1 = f1.read(1024 * 1024)
+                    l2 = f2.read(1024 * 1024)
+                    val += 1024 * 1024
+                    if DES_IN_CPP.Check(l1, l2, 1024 * 1024) == 0:
+                        flag = False
+                else:
+                    l1 = f1.read(length - val)
+                    l2 = f2.read(length - val)
+                    if DES_IN_CPP.Check(l1, l2, length - val) == 0:
+                        flag = False
                     break
             parent.report.insertPlainText('Check has been done.\n')
             parent.pbar.setValue(100)
