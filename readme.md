@@ -37,7 +37,7 @@ TODO
     
 如果出现`未识别的参数-mno-cygwin`，那么请打`cygwinccompiler.patch`（这个问题出现于高版本的mingw32上）。其中`cygwinccompiler.py`位于`PYTHON_HOME/Lib/distutils/`中。
 
-编译好的文件`DES_IN_CPP`会出现在'build/lib.win32-2.7'中，请将模块复制到`src/app/'下即可使用，或者可以将模块拖入你的项目的目录中使用，`DES_IN_CPP`模块的单独用法请参见下文
+编译好的文件`DES_IN_CPP`会出现在`build/lib.win32-2.7`中，请将模块复制到`src/app/`下即可使用，或者可以将模块拖入你的项目的目录中使用，`DES_IN_CPP`模块的单独用法请参见下文
 
 DES_IN_CPP的用法
 ----------
