@@ -7,17 +7,17 @@ class main(object):
     
     def check(self, parent, filename1, filename2):
         
-        f1 = open(filename1, 'rb')
+        f1 = open(unicode(filename1), 'rb')
         parent.report.insertPlainText('Read ' + filename1 + ' successfully.\n')
         f1.seek(0)
-        f2 = open(filename2, 'rb')
+        f2 = open(unicode(filename2), 'rb')
         parent.report.insertPlainText('Read ' + filename2 + ' successfully.\n')
         f2.seek(0)
 
-        length = getsize(filename1)
+        length = getsize(unicode(filename2))
         parent.report.insertPlainText('Checking...\n')
 
-        if getsize(filename1) != getsize(filename2):
+        if getsize(unicode(filename2)) != getsize(unicode(filename2)):
             parent.pbar.setValue(100)
             parent.report.insertPlainText('Check has been done.\n')
             return False

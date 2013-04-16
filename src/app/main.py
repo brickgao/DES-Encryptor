@@ -115,12 +115,12 @@ class qtui(QtGui.QMainWindow):
     def fileinslot(self):
         fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         self.fileinstr = fname
-        self.filein.setText(str(fname))
+        self.filein.setText(fname)
         
     def fileoutslot(self):
         fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file')
         self.fileoutstr = fname
-        self.fileout.setText(str(fname))
+        self.fileout.setText(fname)
 
     def onActivated(self, text):
         self.typestr = text

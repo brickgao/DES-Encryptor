@@ -47,7 +47,6 @@ inline void DES_unencrypt(const uchar data[], uchar * res) {
         MAP_16(newr, r, e, 0, 0)
         MAP_16(newr, r, e, 16, 16)
         MAP_16(newr, r, e, 32, 32)
-
         
         S_BOX(0)
         S_BOX(1)
@@ -57,7 +56,7 @@ inline void DES_unencrypt(const uchar data[], uchar * res) {
         S_BOX(5)
         S_BOX(6)
         S_BOX(7)
-
+        
         MAP_16(afterf, afterp, p, 0, 0)
         MAP_16(afterf, afterp, p, 16, 16)
 
@@ -69,11 +68,13 @@ inline void DES_unencrypt(const uchar data[], uchar * res) {
         }
     }
 
+    cout << endl;
+
     uint befip[64];
-    MAP_16(befip, r, identity, 0, 32)
-    MAP_16(befip, r, identity, 16, 32)
+    MAP_16(befip, r, identity, 0, 0)
+    MAP_16(befip, r, identity, 16, 16)
     MAP_16(befip, l, identity, 0, 32)
-    MAP_16(befip, l, identity, 16, 32)
+    MAP_16(befip, l, identity, 16, 48)
 
     uint bitres[64];
     MAP_16(bitres, befip, ip1, 0, 0)
@@ -90,7 +91,7 @@ inline void DES_unencrypt(const uchar data[], uchar * res) {
         ch += bitres[i * 8 + 4] << 3;
         ch += bitres[i * 8 + 5] << 2;
         ch += bitres[i * 8 + 6] << 1;
-        ch += bitres[i * 8];
+        ch += bitres[i * 8 + 7];
         res[i] = ch;
     }
 
@@ -145,10 +146,10 @@ inline void DES_encrypt(const uchar data[], uchar * res) {
     }
 
     uint befip[64];
-    MAP_16(befip, r, identity, 0, 32)
-    MAP_16(befip, r, identity, 16, 32)
+    MAP_16(befip, r, identity, 0, 0)
+    MAP_16(befip, r, identity, 16, 16)
     MAP_16(befip, l, identity, 0, 32)
-    MAP_16(befip, l, identity, 16, 32)
+    MAP_16(befip, l, identity, 16, 48)
 
     uint bitres[64];
     MAP_16(bitres, befip, ip1, 0, 0)
@@ -165,7 +166,7 @@ inline void DES_encrypt(const uchar data[], uchar * res) {
         ch += bitres[i * 8 + 4] << 3;
         ch += bitres[i * 8 + 5] << 2;
         ch += bitres[i * 8 + 6] << 1;
-        ch += bitres[i * 8];
+        ch += bitres[i * 8 + 7];
         res[i] = ch;
     }
 

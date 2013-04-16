@@ -10,10 +10,10 @@ class DES(object):
         pass
 
     def input_uncode(self, parent, filename1, filename2):
-        f1 = open(filename1, 'rb')
+        f1 = open(unicode(filename1), 'rb')
         parent.report.insertPlainText('Read ' + filename1 + ' successfully.\n')
         f1.seek(0)
-        f2 = open(filename2, 'wb')
+        f2 = open(unicode(filename2), 'wb')
         parent.report.insertPlainText('Create ' + filename2 + ' successfully.\n')
         strlength = f1.read(8)
         length, = struct.unpack('Q', strlength)
@@ -38,12 +38,12 @@ class DES(object):
     
     def input_encode(self, parent, filename1, filename2):
         val = 0
-        f1 = open(filename1, 'rb')
+        f1 = open(unicode(filename1), 'rb')
         parent.report.insertPlainText('Read ' + filename1 + ' successfully.\n')
         f1.seek(0)
-        f2 = open(filename2, 'wb')
+        f2 = open(unicode(filename2), 'wb')
         parent.report.insertPlainText('Create ' + filename2 + ' successfully.\n')
-        length = getsize(filename1)
+        length = getsize(unicode(filename1))
         f2.write(struct.pack('Q', length))
         parent.report.insertPlainText('Encrypt...\n')
         while True:
