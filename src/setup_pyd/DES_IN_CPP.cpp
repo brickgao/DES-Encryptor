@@ -11,6 +11,7 @@
 #include <DES_Table.h>
 using namespace std;
 
+//The method of turning character into bits
 inline void char2bits(uchar src, uint * bits) {
     bits[7] = (src & 1);
     bits[6] = (src & 2) >> 1;
@@ -22,17 +23,20 @@ inline void char2bits(uchar src, uint * bits) {
     bits[0] = (src & 128) >> 7;
 }
 
+//The method of uncrypting data
 inline void DES_unencrypt(const uchar data[], uchar * res) {
     uint init_data[64];
 
     GET_BITS
 
+    //The replacement using IP matrix
     uint ip_data[64];
     MAP_16(ip_data, init_data, ip, 0, 0)
     MAP_16(ip_data, init_data, ip, 16, 16)
     MAP_16(ip_data, init_data, ip, 32, 32)
     MAP_16(ip_data, init_data, ip, 48, 48)
 
+    //Divide the matrix into two matrixes that have same size
     uint l[32], r[32];
     MAP_16(l, ip_data, identity, 0, 0)
     MAP_16(l, ip_data, identity, 16, 16)
@@ -44,10 +48,12 @@ inline void DES_unencrypt(const uchar data[], uchar * res) {
 
     for(int i = 15; i >= 0; i --) {
 
+        //The replacement using E matrix
         MAP_16(newr, r, e, 0, 0)
         MAP_16(newr, r, e, 16, 16)
         MAP_16(newr, r, e, 32, 32)
         
+        //The operation using S BOX
         S_BOX(0)
         S_BOX(1)
         S_BOX(2)
@@ -57,31 +63,35 @@ inline void DES_unencrypt(const uchar data[], uchar * res) {
         S_BOX(6)
         S_BOX(7)
         
+        //The replacement using P matrix
         MAP_16(afterf, afterp, p, 0, 0)
         MAP_16(afterf, afterp, p, 16, 16)
 
+        //Using XOR operation to create new matrix
         XOR_32(tmp, afterf, l)
         
+        //Exchange two matrixs(l, r)
         for(int j = 0; j < 32; j ++) {
             l[j] = r[j];
             r[j] = tmp[j];
         }
     }
 
-    cout << endl;
-
+    //Combine two matrixes into one
     uint befip[64];
     MAP_16(befip, r, identity, 0, 0)
     MAP_16(befip, r, identity, 16, 16)
     MAP_16(befip, l, identity, 0, 32)
     MAP_16(befip, l, identity, 16, 48)
 
+    //The replacement using IP-1
     uint bitres[64];
     MAP_16(bitres, befip, ip1, 0, 0)
     MAP_16(bitres, befip, ip1, 16, 16)
     MAP_16(bitres, befip, ip1, 32, 32)
     MAP_16(bitres, befip, ip1, 48, 48)
 
+    //Turn every 8 bits into character
     for(int i = 0; i < 8; i ++) {
         uchar ch = 0;
         ch += bitres[i * 8] << 7;
@@ -98,17 +108,20 @@ inline void DES_unencrypt(const uchar data[], uchar * res) {
     res[8] = '\0';
 }
 
+//The method of encrypting data
 inline void DES_encrypt(const uchar data[], uchar * res) {
     uint init_data[64];
 
     GET_BITS
 
+    //The replacement using IP matrix
     uint ip_data[64];
     MAP_16(ip_data, init_data, ip, 0, 0)
     MAP_16(ip_data, init_data, ip, 16, 16)
     MAP_16(ip_data, init_data, ip, 32, 32)
     MAP_16(ip_data, init_data, ip, 48, 48)
 
+    //Divide the matrix into two matrixes that have same size
     uint l[32], r[32];
     MAP_16(l, ip_data, identity, 0, 0)
     MAP_16(l, ip_data, identity, 16, 16)
@@ -120,11 +133,12 @@ inline void DES_encrypt(const uchar data[], uchar * res) {
 
     for(int i = 0; i < 16; i ++) {
 
+        //The replacement using E matrix
         MAP_16(newr, r, e, 0, 0)
         MAP_16(newr, r, e, 16, 16)
         MAP_16(newr, r, e, 32, 32)
 
-        
+        //The operation using S BOX
         S_BOX(0)
         S_BOX(1)
         S_BOX(2)
@@ -134,29 +148,35 @@ inline void DES_encrypt(const uchar data[], uchar * res) {
         S_BOX(6)
         S_BOX(7)
 
+        //The replacement using P matrix
         MAP_16(afterf, afterp, p, 0, 0)
         MAP_16(afterf, afterp, p, 16, 16)
 
+        //Using XOR operation to create new matrix
         XOR_32(tmp, afterf, l)
         
+        //Exchange two matrixes(l, r)
         for(int j = 0; j < 32; j ++) {
             l[j] = r[j];
             r[j] = tmp[j];
         }
     }
 
+    //Combine two matrixes into one
     uint befip[64];
     MAP_16(befip, r, identity, 0, 0)
     MAP_16(befip, r, identity, 16, 16)
     MAP_16(befip, l, identity, 0, 32)
     MAP_16(befip, l, identity, 16, 48)
 
+    //The replacement using IP-1
     uint bitres[64];
     MAP_16(bitres, befip, ip1, 0, 0)
     MAP_16(bitres, befip, ip1, 16, 16)
     MAP_16(bitres, befip, ip1, 32, 32)
     MAP_16(bitres, befip, ip1, 48, 48)
 
+    //Turn every 8 bits into character
     for(int i = 0; i < 8; i ++) {
         uchar ch = 0;
         ch += bitres[i * 8] << 7;
@@ -173,6 +193,7 @@ inline void DES_encrypt(const uchar data[], uchar * res) {
     res[8] = '\0';
 }
 
+//The method of getting input and senting data to encrypt
 static PyObject * DES_ready_encrypt(PyObject *self, PyObject *args) {
     PyObject* ret;
     int length = 0;
@@ -181,6 +202,7 @@ static PyObject * DES_ready_encrypt(PyObject *self, PyObject *args) {
     PyArg_ParseTuple(args, "s#", &entry_data, &length);
     for(int i = 0; i < length / 8; i ++) {
         uchar res[9];
+        //Sent every 8 characters to unencryot
         DES_encrypt(&entry_data[i * 8], res);
 
         MAP_8(return_data, res, 0, i * 8)
@@ -191,6 +213,7 @@ static PyObject * DES_ready_encrypt(PyObject *self, PyObject *args) {
     return ret;
 }
 
+//The method of getting input and senting data to unencrypt
 static PyObject * DES_ready_unencrypt(PyObject *self, PyObject *args) {
     PyObject* ret;
     int length = 0;
@@ -199,6 +222,7 @@ static PyObject * DES_ready_unencrypt(PyObject *self, PyObject *args) {
     PyArg_ParseTuple(args, "s#", &entry_data, &length);
     for(int i = 0; i < length / 8; i ++) {
         uchar res[9];
+        //Sent every 8 characters to unecrypt
         DES_unencrypt(&entry_data[i * 8], res);
 
         MAP_8(return_data, res, 0, i * 8)
@@ -209,12 +233,14 @@ static PyObject * DES_ready_unencrypt(PyObject *self, PyObject *args) {
     return ret;
 }
 
+//The method of checking two data is same or not
 static PyObject * DES_ready_check(PyObject *self, PyObject *args) {
     PyObject* ret;
     int length = 0;
     uint flag = 1;
     uchar * entry_data1, * entry_data2;
     PyArg_ParseTuple(args, "ssl", &entry_data1, &entry_data2, &length);
+    //Check two data by characters
     for(int i = 0; i < length; i ++) {
         if(entry_data1[i] != entry_data2[i]) {
             flag = 0;
